@@ -1,0 +1,47 @@
+import time
+import mysql.connector
+import pymysql
+import MySQLdb
+
+# Database credentials
+DB_CONFIG = {
+    'user': 'root',
+    'password': 'my-secret-pw',
+    'host': 'localhost',
+    'database': 'test_db'
+}
+
+# Helper functions for each adapter
+def query_using_connector():
+    cnx = mysql.connector.connect(**DB_CONFIG)
+    cursor = cnx.cursor()
+    cursor.execute("SELECT * FROM your_table")
+    cursor.fetchall()
+    cnx.close()
+
+def query_using_pymysql():
+    connection = pymysql.connect(**DB_CONFIG)
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM your_table")
+    cursor.fetchall()
+    connection.close()
+
+def query_using_mysqlclient():
+    db = MySQLdb.connect(**DB_CONFIG)
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM your_table")
+    cursor.fetchall()
+    db.close()
+
+# Timing function
+def time_query(adapter_function):
+    start_time = time.time()
+    adapter_function()
+    end_time = time.time()
+    return end_time - start_time
+
+# Measure and compare performance
+if __name__ == "__main__":
+    print("Connector/Python time:", time_query(query_using_connector))
+    print("PyMySQL time:", time_query(query_using_pymysql))
+    print("mysqlclient time:", time_query(query_using_mysqlclient))
